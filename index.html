@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Pentest Checklist</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    body { background-color: #1f2937; color: #e5e7eb; font-family: Arial, sans-serif; }
+    .section { margin-bottom: 2rem; }
+    .test-case { display: flex; align-items: center; padding: 0.5rem; border-bottom: 1px solid #374151; }
+    .test-case label { flex-grow: 1; }
+    .test-case button { margin-left: 0.5rem; }
+    .test-case input[type="checkbox"] { transform: scale(1.3); margin-left: 0.75rem; }
+    .completed { background-color: #166534; }
+    .notes-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+    .notes-modal-content { background: #374151; padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 500px; }
+    .notes-modal textarea { width: 100%; height: 150px; background: #1f2937; color: #e5e7eb; border: 1px solid #4b5563; }
+    .port-button { padding: 0.5rem 1rem; border-radius: 0.25rem; }
+  </style>
+</head>
+<body class="p-6">
+  <div class="flex items-center justify-center mb-6">
+    <a href="https://iithack.com" target="_blank"><img src="logo.png" alt="IIT HACK" class="w-10 h-10 mr-2"></a>
+    <h1 class="text-3xl font-bold text-center">Network Pentest Checklist</h1>
+  </div>
+  <div class="mb-4 flex justify-between">
+    <button id="resetBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Reset Checklist</button>
+    <div>
+      <button id="exportJsonBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mr-2">Export to JSON</button>
+      <button id="exportExcelBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Export to Excel</button>
+    </div>
+  </div>
+
+  <!-- Reconnaissance -->
+  <div class="section">
+    <h2 class="text-2xl font-semibold mb-4">Reconnaissance</h2>
+    <div class="test-case">
+      <label for="recon1">Perform WHOIS lookup for domain and IP ownership</label>
+      <input type="checkbox" id="recon1" onchange="saveState()">
+      <button onclick="openNotes('recon1')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="recon2">Query DNS records (A, MX, TXT, CNAME, etc.)</label>
+      <input type="checkbox" id="recon2" onchange="saveState()">
+      <button onclick="openNotes('recon2')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="recon3">Conduct OSINT for organizational details (e.g., employee names, emails)</label>
+      <input type="checkbox" id="recon3" onchange="saveState()">
+      <button onclick="openNotes('recon3')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="recon4">Identify subdomains using tools like Sublist3r or Amass</label>
+      <input type="checkbox" id="recon4" onchange="saveState()">
+      <button onclick="openNotes('recon4')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="recon5">Check for exposed network devices via Shodan or Censys</label>
+      <input type="checkbox" id="recon5" onchange="saveState()">
+      <button onclick="openNotes('recon5')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="recon6">Map network ranges and ASNs using BGP data</label>
+      <input type="checkbox" id="recon6" onchange="saveState()">
+      <button onclick="openNotes('recon6')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="recon7">Identify public-facing IP addresses and services</label>
+      <input type="checkbox" id="recon7" onchange="saveState()">
+      <button onclick="openNotes('recon7')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+  </div>
+
+  <!-- Network Scanning -->
+  <div class="section">
+    <h2 class="text-2xl font-semibold mb-4">Network Scanning</h2>
+    <div class="test-case">
+      <label for="scan6">Identify live hosts using ICMP ping sweeps (nmap -sn <target>)</label>
+      <input type="checkbox" id="scan6" onchange="saveState()">
+      <button onclick="openNotes('scan6')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="scan1">Perform TCP SYN scan on all ports (nmap -sS -p- <target>)</label>
+      <input type="checkbox" id="scan1" onchange="saveState()">
+      <button onclick="openNotes('scan1')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="scan2">Perform TCP connect scan on all ports (nmap -sT -p- <target>)</label>
+      <input type="checkbox" id="scan2" onchange="saveState()">
+      <button onclick="openNotes('scan2')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="scan3">Conduct UDP scan on common ports (nmap -sU --top-ports 1000 <target>)</label>
+      <input type="checkbox" id="scan3" onchange="saveState()">
+      <button onclick="openNotes('scan3')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+	 <div class="test-case">
+      <label for="scan3">Full TCP Port Vulnerability Scan Using Nmap NSE Scripts (nmap -p- --script vuln <target>)</label>
+      <input type="checkbox" id="scan3" onchange="saveState()">
+      <button onclick="openNotes('scan3')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="scan4">Scan for IPv6-enabled hosts and services (nmap -6 <target>)</label>
+      <input type="checkbox" id="scan4" onchange="saveState()">
+      <button onclick="openNotes('scan4')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="scan5">Use Nmap scripts for service detection (nmap -sV -p- <target>)</label>
+      <input type="checkbox" id="scan5" onchange="saveState()">
+      <button onclick="openNotes('scan5')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="scan8">Attempt firewall bypass with fragmented packets (nmap -f <target>)</label>
+      <input type="checkbox" id="scan8" onchange="saveState()">
+      <button onclick="openNotes('scan8')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="scan9">Use idle scan to bypass firewall (nmap -sI <zombie> <target>)</label>
+      <input type="checkbox" id="scan9" onchange="saveState()">
+      <button onclick="openNotes('scan9')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="scan10">Test source port scanning for filtered ports (nmap --source-port 53 <target>)</label>
+      <input type="checkbox" id="scan10" onchange="saveState()">
+      <button onclick="openNotes('scan10')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+  </div>
+
+  <!-- Service Enumeration -->
+  <div class="section">
+    <h2 class="text-2xl font-semibold mb-4">Service Enumeration</h2>
+    <div class="mb-4 flex flex-wrap gap-2">
+      <button data-port="21" onclick="togglePort('21')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 21 (FTP)</button>
+      <button data-port="22" onclick="togglePort('22')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 22 (SSH)</button>
+      <button data-port="23" onclick="togglePort('23')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 23 (Telnet)</button>
+      <button data-port="25" onclick="togglePort('25')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 25 (SMTP)</button>
+      <button data-port="53" onclick="togglePort('53')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 53 (DNS)</button>
+      <button data-port="80" onclick="togglePort('80')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 80 (HTTP)</button>
+      <button data-port="443" onclick="togglePort('443')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 443 (HTTPS)</button>
+      <button data-port="445" onclick="togglePort('445')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 445 (SMB)</button>
+      <button data-port="3389" onclick="togglePort('3389')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 3389 (RDP)</button>
+      <button data-port="1026" onclick="togglePort('1026')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 1026 (Rusersd)</button>
+      <button data-port="2049" onclick="togglePort('2049')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 2049 (NFS)</button>
+      <button data-port="389" onclick="togglePort('389')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 389 (LDAP)</button>
+      <button data-port="636" onclick="togglePort('636')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 636 (LDAPS)</button>
+      <button data-port="3268" onclick="togglePort('3268')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 3268 (LDAP GC)</button>
+      <button data-port="135" onclick="togglePort('135')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 135 (MSSRPC)</button>
+      <button data-port="593" onclick="togglePort('593')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 593 (MSSRPC)</button>
+      <button data-port="554" onclick="togglePort('554')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 554 (RTSP)</button>
+      <button data-port="8554" onclick="togglePort('8554')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 8554 (RTSP)</button>
+      <button data-port="1433" onclick="togglePort('1433')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 1433 (MSSQL)</button>
+      <button data-port="1434" onclick="togglePort('1434')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 1434 (MSSQL)</button>
+      <button data-port="3306" onclick="togglePort('3306')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 3306 (MySQL)</button>
+      <button data-port="5432" onclick="togglePort('5432')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 5432 (PostgreSQL)</button>
+      <button data-port="5900" onclick="togglePort('5900')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 5900 (VNC)</button>
+      <button data-port="6379" onclick="togglePort('6379')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 6379 (Redis)</button>
+      <button data-port="11211" onclick="togglePort('11211')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 11211 (Memcache)</button>
+      <button data-port="1521" onclick="togglePort('1521')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 1521 (Oracle)</button>
+      <button data-port="27017" onclick="togglePort('27017')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 27017 (MongoDB)</button>
+      <button data-port="9200" onclick="togglePort('9200')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 9200 (Elasticsearch)</button>
+      <button data-port="2375" onclick="togglePort('2375')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 2375 (Docker)</button>
+      <button data-port="2376" onclick="togglePort('2376')" class="port-button bg-gray-600 hover:bg-gray-700 text-white">Port 2376 (Docker)</button>
+    </div>
+  </div>
+
+  <!-- Vulnerability Assessment -->
+  <div class="section">
+    <h2 class="text-2xl font-semibold mb-4">Vulnerability Assessment</h2>
+    <div id="dynamicVulnerabilities"></div>
+  </div>
+
+  <!-- Post-Exploitation -->
+  <div class="section">
+    <h2 class="text-2xl font-semibold mb-4">Post-Exploitation</h2>
+    <div class="test-case">
+      <label for="post1">Dump credentials from memory (e.g., Mimikatz)</label>
+      <input type="checkbox" id="post1" onchange="saveState()">
+      <button onclick="openNotes('post1')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="post2">Pivot to internal network segments</label>
+      <input type="checkbox" id="post2" onchange="saveState()">
+      <button onclick="openNotes('post2')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="post3">Extract network configuration details (e.g., routing tables)</label>
+      <input type="checkbox" id="post3" onchange="saveState()">
+      <button onclick="openNotes('post3')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="post4">Test for lateral movement (e.g., PsExec, WMI)</label>
+      <input type="checkbox" id="post4" onchange="saveState()">
+      <button onclick="openNotes('post4')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="post5">Verify persistence mechanisms (e.g., scheduled tasks)</label>
+      <input type="checkbox" id="post5" onchange="saveState()">
+      <button onclick="openNotes('post5')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+    <div class="test-case">
+      <label for="post6">Collect evidence of compromise for reporting</label>
+      <input type="checkbox" id="post6" onchange="saveState()">
+      <button onclick="openNotes('post6')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+    </div>
+  </div>
+
+  <!-- Notes Modal -->
+  <div id="notesModal" class="notes-modal">
+    <div class="notes-modal-content">
+      <h2 id="notesTitle" class="text-xl font-semibold mb-4"></h2>
+      <textarea id="notesText" placeholder="Enter notes for this test case"></textarea>
+      <div class="mt-4 flex justify-end">
+        <button onclick="closeNotes()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded">Close</button>
+        <button onclick="saveNotes()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded ml-2">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentTestCase = null;
+    const portVulnerabilities = {
+      '21': [
+        { id: 'vuln_21_24', label: 'Perform banner grabbing to identify version: nc -vn <target> 21' },
+        { id: 'vuln_21_25', label: 'Check misconfigurations on implemented FTP commands: ftp <target>' },
+        { id: 'vuln_21_26', label: 'Perform anonymous login check: ftp <target> (use username "anonymous" and any password)' },
+        { id: 'vuln_21_27', label: 'Check if files can be downloaded anonymously: wget ftp://anonymous:anonymous@<target>' },
+        { id: 'vuln_21_28', label: 'Perform FTP bounce attack: nmap -b ftp://<target>' },
+        { id: 'vuln_21_29', label: 'Check for default or guessable passwords: hydra -L <user-list> -P <pass-list> ftp://<target>' }
+      ],
+      '22': [
+        { id: 'vuln_22_30', label: 'Perform banner grabbing to identify version: nc -vn <target> 22' },
+        { id: 'vuln_22_31', label: 'Check for null password: ssh <target> (use empty password)' },
+        { id: 'vuln_22_32', label: 'Check for weak cipher algorithms: ssh -Q cipher <target>' },
+        { id: 'vuln_22_33', label: 'Check for default or guessable passwords: hydra -L <user-list> -P <pass-list> ssh://<target>' },
+        { id: 'vuln_22_34', label: 'Perform username enumeration using timing attack: ssh <user>@<target> (compare response times)' }
+      ],
+      '23': [
+        { id: 'vuln_23_35', label: 'Perform banner grabbing to identify version: nc <target> 23' },
+        { id: 'vuln_23_36', label: 'Check for cleartext transmission of credentials and data: telnet <target> (capture traffic)' },
+        { id: 'vuln_23_37', label: 'Check for anonymous login: telnet <target> (use blank or "anonymous" username/password)' },
+        { id: 'vuln_23_38', label: 'Check access to sensitive files: telnet <target> (run cat /etc/passwd)' },
+        { id: 'vuln_23_39', label: 'Check for idle timeout settings: telnet <target> (leave session open to test timeout)' }
+      ],
+      '25': [
+        { id: 'vuln_25_40', label: 'Perform banner grabbing to identify version: nc <target> 25' },
+        { id: 'vuln_25_41', label: 'Check for open relay misconfiguration: swaks --to test@external.com --from test@yourdomain.com --server <target>' },
+        { id: 'vuln_25_42', label: 'Check for VRFY command to enumerate email addresses: nc <target> 25 (then VRFY <username>)' },
+        { id: 'vuln_25_43', label: 'Enumerate users via RCPT TO command: nc <target> 25 (then RCPT TO:<username@domain.com>)' },
+        { id: 'vuln_25_44', label: 'Check for STARTTLS misconfiguration: nc <target> 25 (issue STARTTLS and verify enforcement)' }
+      ],
+      '53': [
+        { id: 'vuln_53_45', label: 'Check for unauthorized zone transfers: dig AXFR @<target> <domain-name>' },
+        { id: 'vuln_53_46', label: 'Check for amplification DDoS vulnerability: dig ANY <domain-name> @<target>' },
+        { id: 'vuln_53_47', label: 'Check for open recursive DNS server: dig <domain-name> @<target>' }
+      ],
+      '1026': [
+        { id: 'vuln_1026_48', label: 'Enumerate users: rusers <target>' }
+      ],
+      '2049': [
+        { id: 'vuln_2049_49', label: 'Check for accessible NFS mounts: showmount -e <target>' },
+        { id: 'vuln_2049_50', label: 'Enumerate and mount NFS shares: mount -t nfs -o vers=2 <target>:<remote_folder> <local_folder> -o nolock' },
+        { id: 'vuln_2049_51', label: 'Create local user with same UID for restricted folder access: useradd -u <uid> <username>' }
+      ],
+      '389': [
+        { id: 'vuln_389_52', label: 'List public information: ldapsearch -x -H ldap://<target> -s base' },
+        { id: 'vuln_389_53', label: 'Bypass TLS SNI check: ldapsearch -H ldaps://<target>:636/ -x -s base -b \'\' \"(objectClass=*)\" \"*\" +' },
+        { id: 'vuln_389_54', label: 'Check null credentials: ldapsearch -x -H ldap://<target> -D \'\' -w \'\' -b \"DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_389_55', label: 'Extract users: ldapsearch -x -h <target> -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_389_56', label: 'Extract computers: ldapsearch -x -h <target> -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Computers,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_389_57', label: 'Extract user information: ldapsearch -x -h <target> -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=<MYNAME>,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_389_58', label: 'Extract domain admins: ldapsearch -x -h <target> -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=DomainAdmins,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_389_59', label: 'Extract enterprise admins: ldapsearch -x -h <target> -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=EnterpriseAdmins,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_389_60', label: 'Extract administrators: ldapsearch -x -h <target> -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Administrators,CN=Builtin,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_389_61', label: 'Extract remote desktop groups: ldapsearch -x -h <target> -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Remote Desktop Users,CN=Builtin,DC=<1_SUBDOMAIN>,DC=<TLD>\"' }
+      ],
+      '636': [
+        { id: 'vuln_636_52', label: 'List public information: ldapsearch -x -H ldaps://<target>:636 -s base' },
+        { id: 'vuln_636_53', label: 'Bypass TLS SNI check: ldapsearch -H ldaps://<target>:636/ -x -s base -b \'\' \"(objectClass=*)\" \"*\" +' },
+        { id: 'vuln_636_54', label: 'Check null credentials: ldapsearch -x -H ldaps://<target>:636 -D \'\' -w \'\' -b \"DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_636_55', label: 'Extract users: ldapsearch -x -h <target>:636 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_636_56', label: 'Extract computers: ldapsearch -x -h <target>:636 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Computers,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_636_57', label: 'Extract user information: ldapsearch -x -h <target>:636 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=<MYNAME>,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_636_58', label: 'Extract domain admins: ldapsearch -x -h <target>:636 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=DomainAdmins,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_636_59', label: 'Extract enterprise admins: ldapsearch -x -h <target>:636 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=EnterpriseAdmins,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_636_60', label: 'Extract administrators: ldapsearch -x -h <target>:636 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Administrators,CN=Builtin,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_636_61', label: 'Extract remote desktop groups: ldapsearch -x -h <target>:636 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Remote Desktop Users,CN=Builtin,DC=<1_SUBDOMAIN>,DC=<TLD>\"' }
+      ],
+      '3268': [
+        { id: 'vuln_3268_52', label: 'List public information: ldapsearch -x -H ldap://<target>:3268 -s base' },
+        { id: 'vuln_3268_53', label: 'Bypass TLS SNI check: ldapsearch -H ldaps://<target>:636/ -x -s base -b \'\' \"(objectClass=*)\" \"*\" +' },
+        { id: 'vuln_3268_54', label: 'Check null credentials: ldapsearch -x -H ldap://<target>:3268 -D \'\' -w \'\' -b \"DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_3268_55', label: 'Extract users: ldapsearch -x -h <target>:3268 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_3268_56', label: 'Extract computers: ldapsearch -x -h <target>:3268 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Computers,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_3268_57', label: 'Extract user information: ldapsearch -x -h <target>:3268 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=<MYNAME>,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_3268_58', label: 'Extract domain admins: ldapsearch -x -h <target>:3268 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=DomainAdmins,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_3268_59', label: 'Extract enterprise admins: ldapsearch -x -h <target>:3268 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=EnterpriseAdmins,CN=Users,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_3268_60', label: 'Extract administrators: ldapsearch -x -h <target>:3268 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Administrators,CN=Builtin,DC=<1_SUBDOMAIN>,DC=<TLD>\"' },
+        { id: 'vuln_3268_61', label: 'Extract remote desktop groups: ldapsearch -x -h <target>:3268 -D \'<DOMAIN>\\\\<username>\' -w \'<password>\' -b \"CN=Remote Desktop Users,CN=Builtin,DC=<1_SUBDOMAIN>,DC=<TLD>\"' }
+      ],
+      '445': [
+        { id: 'vuln_445_62', label: 'Check for anonymous credentials: smbclient -U \"\" -N -L //<target>' },
+        { id: 'vuln_445_63', label: 'Perform banner grabbing for versions: smbclient -U \"\" -N -L //<target>' },
+        { id: 'vuln_445_64', label: 'Check for null sessions: smbclient --no-pass -L //<target>' },
+        { id: 'vuln_445_65', label: 'List users: rpcclient -U \"\" -N <target> -c enumdomusers' },
+        { id: 'vuln_445_66', label: 'Get user details: rpcclient -U \"\" -N <target> -c \"queryuser <0xrid>\"' },
+        { id: 'vuln_445_67', label: 'Get user groups: rpcclient -U \"\" -N <target> -c \"queryusergroups <0xrid>\"' },
+        { id: 'vuln_445_68', label: 'Get SID of a user: rpcclient -U \"\" -N <target> -c \"lookupnames <username>\"' },
+        { id: 'vuln_445_69', label: 'List user aliases: rpcclient -U \"\" -N <target> -c \"queryuseraliases [builtin|domain] <sid>\"' },
+        { id: 'vuln_445_70', label: 'List groups: rpcclient -U \"\" -N <target> -c enumdomgroups' },
+        { id: 'vuln_445_71', label: 'Get group details: rpcclient -U \"\" -N <target> -c \"querygroup <0xrid>\"' },
+        { id: 'vuln_445_72', label: 'Get group members: rpcclient -U \"\" -N <target> -c \"querygroupmem <0xrid>\"' },
+        { id: 'vuln_445_73', label: 'List aliases: rpcclient -U \"\" -N <target> -c \"enumalsgroups [builtin|domain]\"' },
+        { id: 'vuln_445_74', label: 'Get alias members: rpcclient -U \"\" -N <target> -c \"queryaliasmem [builtin|domain] <0xrid>\"' },
+        { id: 'vuln_445_75', label: 'List domains: rpcclient -U \"\" -N <target> -c enumdomains' },
+        { id: 'vuln_445_76', label: 'Get SID: rpcclient -U \"\" -N <target> -c lsaquery' },
+        { id: 'vuln_445_77', label: 'Get domain info: rpcclient -U \"\" -N <target> -c querydominfo' },
+        { id: 'vuln_445_78', label: 'Find SIDs by name: rpcclient -U \"\" -N <target> -c \"lookupnames <username>\"' },
+        { id: 'vuln_445_79', label: 'Enumerate SIDs: rpcclient -U \"\" -N <target> -c lsaenumsid' },
+        { id: 'vuln_445_80', label: 'Perform RID cycling to check more SIDs: rpcclient -U \"\" -N <target> -c \"lookupsids <sid>\"' },
+        { id: 'vuln_445_81', label: 'List shares: smbclient --no-pass -L //<target>' },
+        { id: 'vuln_445_82', label: 'List shares with credentials: smbclient -U \"username%passwd\" -L //<target>' },
+        { id: 'vuln_445_83', label: 'Mount share without credentials: mount -t cifs //<target>/share /mnt/share' },
+        { id: 'vuln_445_84', label: 'Mount share with credentials: mount -t cifs -o \"username=user,password=password\" //<target>/share /mnt/share' },
+        { id: 'vuln_445_85', label: 'Perform SMB relay attack: responder -I <interface>' }
+      ],
+      '135': [
+        { id: 'vuln_135_86', label: 'Discover endpoint mapper services: rpcdump.py <target>' },
+        { id: 'vuln_135_87', label: 'Discover hidden DCERPC servers: rpcdump.py <target>' },
+        { id: 'vuln_135_88', label: 'Discover remote management interfaces: rpcdump.py <target>' },
+        { id: 'vuln_135_89', label: 'Audit DCERPC TCP services: rpcdump.py <target>' }
+      ],
+      '593': [
+        { id: 'vuln_593_86', label: 'Discover endpoint mapper services: rpcdump.py <target>' },
+        { id: 'vuln_593_87', label: 'Discover hidden DCERPC servers: rpcdump.py <target>' },
+        { id: 'vuln_593_88', label: 'Discover remote management interfaces: rpcdump.py <target>' },
+        { id: 'vuln_593_89', label: 'Audit DCERPC TCP services: rpcdump.py <target>' }
+      ],
+      '554': [
+        { id: 'vuln_554_90', label: 'Gather RTSP methods: nc <target> 554 (issue OPTIONS *)' },
+        { id: 'vuln_554_91', label: 'Brute-force RTSP URLs: hydra -L <url-list> -P <pass-list> rtsp://<target>' }
+      ],
+      '8554': [
+        { id: 'vuln_8554_90', label: 'Gather RTSP methods: nc <target> 8554 (issue OPTIONS *)' },
+        { id: 'vuln_8554_91', label: 'Brute-force RTSP URLs: hydra -L <url-list> -P <pass-list> rtsp://<target>' }
+      ],
+      '1433': [
+        { id: 'vuln_1433_92', label: 'Perform banner grabbing: nc <target> 1433' },
+        { id: 'vuln_1433_93', label: 'Gather MSSQL information: sqlcmd -S <target> -U sa -P \"\" -Q \"SELECT @@version\"' },
+        { id: 'vuln_1433_94', label: 'Execute commands with authenticated MSSQL: sqlcmd -S <target> -U <username> -P <password> -Q \"xp_cmdshell \'id\'\"' },
+        { id: 'vuln_1433_95', label: 'Execute commands without authentication if xp_cmdshell enabled: sqlcmd -S <target> -Q \"xp_cmdshell \'whoami\'\"' },
+        { id: 'vuln_1433_96', label: 'Attempt MSSQL privilege escalation: sqlcmd -S <target> -U <username> -P <password> -Q \"EXEC sp_addsrvrolemember \'<user>\', \'sysadmin\'\"' },
+        { id: 'vuln_1433_121', label: 'Check for default or weak credentials: hydra -l <username> -P <password-list> mssql://<target>' },
+        { id: 'vuln_1433_122', label: 'Check for xp_cmdshell enabled: sqlcmd -S <target> -U <username> -P <password> -Q \"EXEC xp_cmdshell \'whoami\'\"' },
+        { id: 'vuln_1433_123', label: 'Check for version disclosure: sqlcmd -S <target> -Q \"SELECT @@version\"' }
+      ],
+      '1434': [
+        { id: 'vuln_1434_121', label: 'Check for default or weak credentials: hydra -l <username> -P <password-list> mssql://<target>' },
+        { id: 'vuln_1434_122', label: 'Check for xp_cmdshell enabled: sqlcmd -S <target> -U <username> -P <password> -Q \"EXEC xp_cmdshell \'whoami\'\"' },
+        { id: 'vuln_1434_123', label: 'Check for version disclosure: sqlcmd -S <target> -Q \"SELECT @@version\"' }
+      ],
+      '3306': [
+        { id: 'vuln_3306_97', label: 'Enumerate MySQL information: mysql -h <target> -u root -e \"SHOW DATABASES;\"' },
+        { id: 'vuln_3306_98', label: 'Perform banner grabbing: nc <target> 3306' },
+        { id: 'vuln_3306_99', label: 'Connect without password: mysql -h <target> -u root' },
+        { id: 'vuln_3306_100', label: 'Extract credentials: mysql -h <target> -u root -p<password> -e \"SELECT User,Host,authentication_string FROM mysql.user;\"' }
+      ],
+      '5432': [
+        { id: 'vuln_5432_101', label: 'Perform banner grabbing: nc <target> 5432' },
+        { id: 'vuln_5432_102', label: 'Attempt database name injection: psql -h <target> -U <user> -d \"<database>;<malicious>\"' }
+      ],
+      '5900': [
+        { id: 'vuln_5900_103', label: 'Check for unauthenticated VNC access: vncviewer <target>::5900' },
+        { id: 'vuln_5900_104', label: 'Check for weak or common passwords: vncviewer -passwd <password-file> <target>::5900' },
+        { id: 'vuln_5900_105', label: 'Locate encrypted password file: ls ~/.vnc/passwd' },
+        { id: 'vuln_5900_106', label: 'Decrypt VNC password: (use decryption tool with encrypted password)' }
+      ],
+      '6379': [
+        { id: 'vuln_6379_107', label: 'Perform banner grabbing: nc -vn <target> 6379' },
+        { id: 'vuln_6379_108', label: 'Check for unauthenticated access: redis-cli -h <target>' },
+        { id: 'vuln_6379_109', label: 'Enumerate connected clients: redis-cli -h <target> CLIENT LIST' },
+        { id: 'vuln_6379_110', label: 'Extract configuration: redis-cli -h <target> CONFIG GET *' },
+        { id: 'vuln_6379_111', label: 'Dump database: redis-cli -h <target> SELECT <db>; KEYS *; GET <key>' }
+      ],
+      '11211': [
+        { id: 'vuln_11211_112', label: 'Extract statistics: memcstat --servers=<target>' },
+        { id: 'vuln_11211_113', label: 'Dump cached items: memccat --servers=<target> <item1> <item2> <item3>' }
+      ],
+      '3389': [
+        { id: 'vuln_3389_114', label: 'Check for weak or no multi-factor authentication: hydra -l <username> -P <password-list> rdp://<target>' },
+        { id: 'vuln_3389_115', label: 'Check if NLA is disabled: rdesktop -u <user> -p <pass> <target> (observe authentication behavior)' },
+        { id: 'vuln_3389_116', label: 'Check for BlueKeep vulnerability (CVE-2019-0708): rdesktop <target> (test for crash or RCE)' }
+      ],
+      '1521': [
+        { id: 'vuln_1521_117', label: 'Check for default or weak credentials: sqlplus <username>/<password>@<target>:1521/<service-name>' },
+        { id: 'vuln_1521_118', label: 'Check for TNS listener unauthorized access: tnscmd10g version -h <target>' },
+        { id: 'vuln_1521_119', label: 'Enumerate Oracle SIDs: tnscmd10g status -h <target>' },
+        { id: 'vuln_1521_120', label: 'Check for TNS poisoning vulnerability: tnscmd10g <command> -h <target>' }
+      ],
+      '27017': [
+        { id: 'vuln_27017_124', label: 'Check for unauthorized MongoDB access: mongo --host <target> --port 27017' },
+        { id: 'vuln_27017_125', label: 'Check for default or weak credentials: mongo -u <username> -p <password> --authenticationDatabase admin --host <target> --port 27017' },
+        { id: 'vuln_27017_126', label: 'Check for exposed management interface: curl http://<target>:27017/' }
+      ],
+      '9200': [
+        { id: 'vuln_9200_127', label: 'Check for unauthenticated Elasticsearch access: curl -X GET http://<target>:9200/' },
+        { id: 'vuln_9200_128', label: 'Check for open indexes without access control: curl -X GET http://<target>:9200/_cat/indices?v' }
+      ],
+      '2375': [
+        { id: 'vuln_2375_129', label: 'Check for unauthenticated Docker API access: curl http://<target>:2375/containers/json' },
+        { id: 'vuln_2375_130', label: 'Check for access to sensitive host files: curl -X POST -H \"Content-Type: application/json\" --data \'{\"Image\":\"alpine\", \"Cmd\":[\"cat\", \"/etc/passwd\"]\}\' http://<target>:2375/containers/create' },
+        { id: 'vuln_2375_131', label: 'Check for privilege escalation via Docker socket: curl --unix-socket /var/run/docker.sock http://localhost/containers/json' },
+        { id: 'vuln_2375_132', label: 'Check for exposed Docker daemon on unencrypted port: curl http://<target>:2375/_ping' }
+      ],
+      '2376': [
+        { id: 'vuln_2376_129', label: 'Check for unauthenticated Docker API access: curl http://<target>:2375/containers/json' },
+        { id: 'vuln_2376_130', label: 'Check for access to sensitive host files: curl -X POST -H \"Content-Type: application/json\" --data \'{\"Image\":\"alpine\", \"Cmd\":[\"cat\", \"/etc/passwd\"]\}\' http://<target>:2375/containers/create' },
+        { id: 'vuln_2376_131', label: 'Check for privilege escalation via Docker socket: curl --unix-socket /var/run/docker.sock http://localhost/containers/json' }
+      ]
+    };
+
+    // Load state from localStorage
+    function loadState() {
+      const state = JSON.parse(localStorage.getItem('networkPentestChecklist') || '{}');
+      document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = state[checkbox.id]?.checked || false;
+        if (checkbox.checked) {
+          checkbox.closest('.test-case').classList.add('completed');
+        }
+      });
+      loadPorts();
+      updateVulnerabilities();
+    }
+
+    // Save state to localStorage
+    function saveState() {
+      const state = JSON.parse(localStorage.getItem('networkPentestChecklist') || '{}');
+      document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        state[checkbox.id] = {
+          checked: checkbox.checked,
+          notes: state[checkbox.id]?.notes || ''
+        };
+        checkbox.closest('.test-case').classList.toggle('completed', checkbox.checked);
+      });
+      localStorage.setItem('networkPentestChecklist', JSON.stringify(state));
+    }
+
+    // Load selected ports
+    function loadPorts() {
+      const selectedPorts = JSON.parse(localStorage.getItem('selectedPorts') || '[]');
+      document.querySelectorAll('.port-button').forEach(button => {
+        const port = button.getAttribute('data-port');
+        if (selectedPorts.includes(port)) {
+          button.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+          button.classList.add('bg-red-600', 'hover:bg-red-700');
+        } else {
+          button.classList.remove('bg-red-600', 'hover:bg-red-700');
+          button.classList.add('bg-gray-600', 'hover:bg-gray-700');
+        }
+      });
+    }
+
+    // Toggle port selection
+    function togglePort(port) {
+      let selectedPorts = JSON.parse(localStorage.getItem('selectedPorts') || '[]');
+      if (selectedPorts.includes(port)) {
+        selectedPorts = selectedPorts.filter(p => p !== port);
+      } else {
+        selectedPorts.push(port);
+      }
+      localStorage.setItem('selectedPorts', JSON.stringify(selectedPorts));
+      loadPorts();
+      updateVulnerabilities();
+    }
+
+    // Update dynamic vulnerabilities
+    function updateVulnerabilities() {
+      const selectedPorts = JSON.parse(localStorage.getItem('selectedPorts') || '[]');
+      const dynamicVulns = document.getElementById('dynamicVulnerabilities');
+      dynamicVulns.innerHTML = '';
+      const state = JSON.parse(localStorage.getItem('networkPentestChecklist') || '{}');
+      selectedPorts.forEach(port => {
+        if (portVulnerabilities[port]) {
+          portVulnerabilities[port].forEach(vuln => {
+            const div = document.createElement('div');
+            div.className = 'test-case';
+            if (state[vuln.id]?.checked) div.className += ' completed';
+            div.innerHTML = `
+              <label for="${vuln.id}">${vuln.label}</label>
+              <input type="checkbox" id="${vuln.id}" onchange="saveState()" ${state[vuln.id]?.checked ? 'checked' : ''}>
+              <button onclick="openNotes('${vuln.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-sm">Notes</button>
+            `;
+            dynamicVulns.appendChild(div);
+          });
+        }
+      });
+    }
+
+    // Open notes modal
+    function openNotes(testCaseId) {
+      currentTestCase = testCaseId;
+      const state = JSON.parse(localStorage.getItem('networkPentestChecklist') || '{}');
+      const label = document.querySelector(`label[for="${testCaseId}"]`).textContent;
+      document.getElementById('notesTitle').textContent = `Notes for: ${label}`;
+      document.getElementById('notesText').value = state[testCaseId]?.notes || '';
+      document.getElementById('notesModal').style.display = 'flex';
+    }
+
+    // Close notes modal
+    function closeNotes() {
+      document.getElementById('notesModal').style.display = 'none';
+      currentTestCase = null;
+    }
+
+    // Save notes
+    function saveNotes() {
+      const notes = document.getElementById('notesText').value;
+      const state = JSON.parse(localStorage.getItem('networkPentestChecklist') || '{}');
+      state[currentTestCase] = state[currentTestCase] || {};
+      state[currentTestCase].notes = notes;
+      state[currentTestCase].checked = document.getElementById(currentTestCase).checked;
+      localStorage.setItem('networkPentestChecklist', JSON.stringify(state));
+      closeNotes();
+    }
+
+    // Reset checklist
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset the checklist? All progress and notes will be lost.')) {
+        localStorage.removeItem('networkPentestChecklist');
+        localStorage.removeItem('selectedPorts');
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+          checkbox.checked = false;
+          checkbox.closest('.test-case').classList.remove('completed');
+        });
+        loadPorts();
+        updateVulnerabilities();
+      }
+    });
+
+    // Export to JSON
+    document.getElementById('exportJsonBtn').addEventListener('click', () => {
+      const state = JSON.parse(localStorage.getItem('networkPentestChecklist') || '{}');
+      const exportData = Object.keys(state).map(id => ({
+        TestCase: document.querySelector(`label[for="${id}"]`).textContent,
+        Completed: state[id].checked ? 'Yes' : 'No',
+        Notes: state[id].notes || ''
+      }));
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'network_pentest_checklist.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Export to Excel
+    document.getElementById('exportExcelBtn').addEventListener('click', () => {
+      const state = JSON.parse(localStorage.getItem('networkPentestChecklist') || '{}');
+      const exportData = Object.keys(state).map(id => ({
+        'Test Case': document.querySelector(`label[for="${id}"]`).textContent,
+        'Completed': state[id].checked ? 'Yes' : 'No',
+        'Notes': state[id].notes || ''
+      }));
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Checklist');
+      XLSX.writeFile(wb, 'network_pentest_checklist.xlsx');
+    });
+
+    // Initialize
+    loadState();
+  </script>
+</body>
+</html>
